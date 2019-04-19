@@ -105,14 +105,14 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
         cv2.imwrite("/tmp/talkingraspi_{}.jpg".format(motionCounter), frame)
 
         # check to see if enough time has passed between uploads
-        if (timestamp - lastUploaded).seconds >= conf["min_upload_seconds"]:
+        if (timestamp - lastUploaded).seconds >= min_upload_seconds:
 
             # increment the motion counter
             motionCounter += 1
 
             # check to see if the number of frames with consistent motion is
             # high enough
-            if motionCounter >= int(conf["min_motion_frames"]):
+            if motionCounter >= int(min_motion_frames):
                 # check to see if dropbox sohuld be used
                 print("motion")
                 # update the last uploaded timestamp and reset the motion
@@ -125,7 +125,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
         motionCounter = 0
 
     # check to see if the frames should be displayed to screen
-    if conf["show_video"]:
+    if show_video:
         # display the security feed
         cv2.imshow("Security Feed", frame)
         key = cv2.waitKey(1) & 0xFF
