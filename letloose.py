@@ -113,8 +113,13 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
             # check to see if the number of frames with consistent motion is
             # high enough
             if motionCounter >= int(min_motion_frames):
+                soundList = glob.glob("sounds/*.mp3")
+                chosenSound = random.choice(soundList)
                 print("motion")
-                speak("Watup")
+                if random() < 0.5:
+                    speak("This motherfucker is very very creepy", language="en")
+                else:
+                    play_sound(chosenSound)
                 # update the last uploaded timestamp and reset the motion
                 # counter
                 lastUploaded = timestamp
