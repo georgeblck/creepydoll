@@ -53,7 +53,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
     # resize the frame, convert it to grayscale, and blur it
     # TODO: resize image here into cmaller sizes
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, blur_size, 0)
+    gray = cv2.GaussianBlur(gray, tuple(blur_size), 0)
 
     # if the average frame is None, initialize it
     if avg is None:
