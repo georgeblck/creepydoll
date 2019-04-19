@@ -7,6 +7,7 @@ import uuid
 import os
 import subprocess
 import glob
+from string import whitespace
 
 from os.path import basename
 
