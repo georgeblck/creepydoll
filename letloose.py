@@ -120,9 +120,8 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
                 if random.random() < 0.5:
                     speak("This motherfucker is very very creepy", language="en")
                 else:
-                    p = vlc.MediaPlayer(chosenSound)
-                    p.play
-                    time.sleep(10)
+                    play_mp3(chosenSound)
+                    # time.sleep(10)
                 # update the last uploaded timestamp and reset the motion
                 # counter
                 lastUploaded = timestamp

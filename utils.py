@@ -47,7 +47,7 @@ def playVidwaitButton(mov1, mov2, pin):
     GPIO.cleanup()
 
 
-def speak(speech, language = "de"):
+def speak(speech, language="de"):
     filename = 'temp.mp3'
     tts = gTTS(text=speech, lang=language).save(filename)
     play_sound(filename)
@@ -60,9 +60,10 @@ def syscmd(cmd):
     p.wait()
 
 
-def play_sound(filename, loudness = 100):
+def play_sound(filename, loudness=100):
     """ Helper function to play audio files in Linux """
-    play_cmd = "mplayer -volume {} -speed {} ./{}".format(loudness, 1, filename)
+    play_cmd = "mplayer -volume {} -speed {} ./{}".format(
+        loudness, 1, filename)
     print(play_cmd)
     syscmd(play_cmd)
 
@@ -74,3 +75,7 @@ def is_time_between(begin_time, end_time, check_time=None):
         return check_time >= begin_time and check_time <= end_time
     else:  # crosses midnight
         return check_time >= begin_time or check_time <= end_time
+
+
+def play_mp3(path):
+    subprocess.Popen(['mpg123', '-q', path]).wait()
