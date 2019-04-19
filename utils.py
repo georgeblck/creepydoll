@@ -59,7 +59,7 @@ def syscmd(cmd):
     p.wait()
 
 
-def play_sound(filename, loudness):
+def play_sound(filename, loudness = 80):
     """ Helper function to play audio files in Linux """
     play_cmd = "mplayer -volume {} -speed {} ./{}".format(loudness, 1, filename)
     syscmd(play_cmd)

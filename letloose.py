@@ -15,14 +15,14 @@ import glob
 
 # make options
 show_video = False
-min_upload_seconds = 0.5
-min_motion_frames = 8
+min_upload_seconds = 0.1
+min_motion_frames = 6
 camera_warmup_time = 1
 delta_tresh = 5
 blur_size = [21, 21]
 resolution = [1280, 960]
 fps = 20
-min_area = 5000
+min_area = 10000
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
@@ -113,8 +113,8 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
             # check to see if the number of frames with consistent motion is
             # high enough
             if motionCounter >= int(min_motion_frames):
-                # check to see if dropbox sohuld be used
                 print("motion")
+                speak("Watup")
                 # update the last uploaded timestamp and reset the motion
                 # counter
                 lastUploaded = timestamp
