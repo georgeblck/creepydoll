@@ -116,7 +116,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
                 soundList = glob.glob("sounds/*.mp3")
                 chosenSound = random.choice(soundList)
                 print("motion")
-                if random() < 0.5:
+                if random.random() < 0.5:
                     speak("This motherfucker is very very creepy", language="en")
                 else:
                     play_sound(chosenSound)
