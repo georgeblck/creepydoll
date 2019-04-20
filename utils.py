@@ -61,7 +61,7 @@ def record_audio(length=10):
     syscmd('aplay ' + WAVE_OUTPUT_FILENAME)
 
 
-def record_video():
+def record_video(destination):
     filename = os.path.join(
         destination, datetime.now().strftime('%Y-%m-%d_%H.%M.%S.h264'))
     camera.start_preview()
