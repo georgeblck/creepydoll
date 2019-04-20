@@ -119,7 +119,11 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
             # check to see if the number of frames with consistent motion is
             # high enough
             if motionCounter >= int(min_motion_frames):
-                record_video("videos")
+                destination = "videos"
+                filename = os.path.join(
+                    destination, datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S.h264'))
+                camera.start_preview()
+                camera.start_recording(filename)
                 modus = random.choice(["button", "mirror", "creepy"])
                 speak("Hello, You have activated me.", language="en")
                 time.sleep(random.randint(0, 9))
@@ -133,7 +137,8 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
                     soundList = glob.glob("sounds/*.mp3")
                     chosenSound = random.choice(soundList)
                     play_mp3(chosenSound)
-                finish_video()
+                camera.stop_recording()
+                camera.stop_preview()
                 # update the last uploaded timestamp and reset the motion
                 # counter
                 lastUploaded = timestamp
