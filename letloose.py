@@ -12,7 +12,7 @@ import sys
 import os
 import random
 import glob
-import vlc
+import RPi.GPIO as GPIO
 
 # make options
 show_video = False
@@ -24,6 +24,11 @@ blur_size = [21, 21]
 resolution = [1280, 960]
 fps = 20
 min_area = 10000
+pin = 23
+
+# init GPIO shit
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
@@ -114,14 +119,20 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
             # check to see if the number of frames with consistent motion is
             # high enough
             if motionCounter >= int(min_motion_frames):
-                soundList = glob.glob("sounds/*.mp3")
-                chosenSound = random.choice(soundList)
-                print("motion")
-                if random.random() < 0.5:
-                    speak("This motherfucker is very very creepy", language="en")
+                modus = random.choice(["button", "mirror", "creepy"])
+                speak("Hello, You have activated me.", language="en")
+                time.sleep(random.randint(0, 9))
+                if modus == "button":
+                    while GPIO.input(pin) == GPIO.HIGH:
+                        time.sleep(0.01)
+                        speak("Push the button. Push the button.", language="de")
+                elif modus == "mirror":
+                    record_audio()
                 else:
+                    soundList = glob.glob("sounds/*.mp3")
+                    chosenSound = random.choice(soundList)
                     play_mp3(chosenSound)
-                    # time.sleep(10)
+
                 # update the last uploaded timestamp and reset the motion
                 # counter
                 lastUploaded = timestamp

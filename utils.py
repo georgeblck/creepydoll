@@ -8,6 +8,8 @@ import os
 import subprocess
 import glob
 from string import whitespace
+import pyaudio
+import wave
 
 from os.path import basename
 
@@ -21,6 +23,41 @@ class TempImage:
     def cleanup(self):
         # remove the file
         os.remove(self.path)
+
+
+def record_audio(length=10):
+    FORMAT = pyaudio.paInt16
+    CHANNELS = 2
+    RATE = 44100
+    CHUNK = 1024
+    RECORD_SECONDS = length
+    WAVE_OUTPUT_FILENAME = "file.wav"
+    audio = pyaudio.PyAudio()
+
+    # start Recording input_device_index = 2
+    stream = audio.open(format=FORMAT, channels=CHANNELS,
+                        rate=RATE, input=True,
+                        frames_per_buffer=CHUNK)
+    print "recording..."
+    frames = []
+
+    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+        data = stream.read(CHUNK)
+        frames.append(data)
+    print "finished recording"
+
+    # stop Recording
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    waveFile.setnchannels(CHANNELS)
+    waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+    waveFile.setframerate(RATE)
+    waveFile.writeframes(b''.join(frames))
+    waveFile.close()
+    syscmd('aplay ' + WAVE_OUTPUT_FILENAME)
 
 
 def playVidwaitButton(mov1, mov2, pin):
@@ -64,7 +101,6 @@ def play_sound(filename, loudness=100):
     """ Helper function to play audio files in Linux """
     play_cmd = "mplayer -volume {} -speed {} ./{}".format(
         loudness, 1, filename)
-    print(play_cmd)
     syscmd(play_cmd)
 
 
