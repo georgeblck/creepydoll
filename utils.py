@@ -10,6 +10,7 @@ import glob
 from string import whitespace
 import pyaudio
 import wave
+from picamera import PiCamera
 
 from os.path import basename
 
@@ -60,28 +61,16 @@ def record_audio(length=10):
     syscmd('aplay ' + WAVE_OUTPUT_FILENAME)
 
 
-def playVidwaitButton(mov1, mov2, pin):
-    import RPi.GPIO as GPIO
-    from subprocess import Popen, PIPE, STDOUT
-    import time
-    # setup GPIO
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    DEVNULL = open(os.devnull, 'wb')
-    # Play first video in loop via omxplayer
-    omxc = Popen(['omxplayer', '-b', '--loop', mov1],
-                 stdin=PIPE, stdout=DEVNULL, stderr=STDOUT)
-    while GPIO.input(pin) == GPIO.HIGH:
-        time.sleep(0.01)
-    # if the button is pressed--> Play the second one
-    os.system('killall omxplayer.bin')
-    omxc = Popen(['omxplayer', '-b', mov2], stdin=PIPE,
-                 stdout=DEVNULL, stderr=STDOUT)
-    # Wait for duration of video
-    time.sleep(10)
-    # And start again from the top
-    # playVidwaitButton(mov1, mov2, pin)
-    GPIO.cleanup()
+def record_video():
+    filename = os.path.join(
+        destination, datetime.now().strftime('%Y-%m-%d_%H.%M.%S.h264'))
+    camera.start_preview()
+    camera.start_recording(filename)
+
+
+def finish_video():
+    camera.stop_recording()
+    camera.stop_preview()
 
 
 def speak(speech, language="de"):
