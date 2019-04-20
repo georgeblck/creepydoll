@@ -139,6 +139,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
                     play_mp3(chosenSound)
                 camera.stop_recording()
                 camera.stop_preview()
+                syscmd("omxplayer " + destination)
                 # update the last uploaded timestamp and reset the motion
                 # counter
                 lastUploaded = timestamp
