@@ -124,7 +124,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
                     destination, datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S.h264'))
                 camera.start_preview()
                 camera.start_recording(filename)
-                modus = random.choice(["button", "mirror", "creepy"])
+                modus = random.choice(["button", "creepy"])
                 speak("Hello, You have activated me.", language="en")
                 time.sleep(random.randint(0, 9))
                 if modus == "button":
