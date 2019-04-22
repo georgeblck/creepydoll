@@ -124,10 +124,10 @@ try:
                 # check to see if the number of frames with consistent motion is
                 # high enough
                 if motionCounter >= int(min_motion_frames):
-                    play_mp3(make_speech("Wer weckt mich auf? Du hast 10 Sekunden Zeit um mich zu deaktivieren.",
-                                         "de"), random.randint(70, 100), round(np.random.uniform(0.2, 2), 3))
+                    play_mp3(make_speech("Du hast mich aufgeweckt. Ich gebe dir 10 Sekunden Zeit um mich zu deaktivieren.",
+                                         "de"), random.randint(90, 100), round(np.random.uniform(0.2, 2), 3))
                     time.sleep(1)
-                    #speak("Das Wort ist: Stop.", language="en")
+                    speak("Ficker", language="en")
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     if random.random() >= 0.5:
                         transcribedListen = None
@@ -145,7 +145,7 @@ try:
                         settings = {
                             "path": random.choice(
                                 ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                            "laut": random.randint(80, 100),
+                            "laut": random.randint(90, 100),
                             "schnell": round(np.random.uniform(0.4, 1.7), 3),
                             "lang": random.choice(["de", "en"])
                         }
@@ -155,7 +155,7 @@ try:
                             while GPIO.event_detected(pin) == False:
                                 button_talk(settings, buttonCounter)
                             buttonCounter += 1
-                            play_mp3("creepy_laugh.mp3", 100, 1.7)
+                            play_mp3("creepy_laugh.mp3", 100, 1.8)
                         elif settings["path"] == "play_sounds":
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
