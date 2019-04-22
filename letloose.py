@@ -125,9 +125,10 @@ try:
                 # high enough
                 if motionCounter >= int(min_motion_frames):
                     play_mp3(make_speech("Du hast mich aufgeweckt. Ich gebe dir 10 Sekunden Zeit um mich zu deaktivieren.",
-                                         "de"), random.randint(90, 100), round(np.random.uniform(0.2, 2), 3))
+                                         "de"), 100, round(np.random.uniform(0.4, 2), 3))
                     time.sleep(1)
-                    speak("Ficker", language="en")
+                    play_mp3(make_speech("Du Ficker.",
+                                         "de"), 100, 2)
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     if random.random() >= 0.5:
                         transcribedListen = None
