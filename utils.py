@@ -11,7 +11,7 @@ from string import whitespace
 import pyaudio
 import wave
 from picamera import PiCamera
-
+import speech_recognition as sr
 from os.path import basename
 
 
@@ -26,13 +26,13 @@ class TempImage:
         os.remove(self.path)
 
 
-def record_audio(length=10):
+def record_audio(length=10, filename):
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
     RATE = 44100
     CHUNK = 1024
     RECORD_SECONDS = length
-    WAVE_OUTPUT_FILENAME = "file.wav"
+    WAVE_OUTPUT_FILENAME = recordings + filename + ".wav"
     audio = pyaudio.PyAudio()
 
     # start Recording input_device_index = 2
@@ -74,7 +74,7 @@ def finish_video():
 
 
 def speak(speech, language="de"):
-    filename = 'temp.mp3'
+    filename = 'speak.mp3'
     tts = gTTS(text=speech, lang=language).save(filename)
     play_sound(filename)
 

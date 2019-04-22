@@ -13,6 +13,8 @@ import os
 import random
 import glob
 import RPi.GPIO as GPIO
+import numpy as np
+from num2words import num2words
 
 # make options
 show_video = False
@@ -53,6 +55,7 @@ try:
         frame = f.array
         timestamp = datetime.datetime.now()
         text = "Unoccupied"
+        buttonCounter = 0
 
         ######################################################################
         # COMPUTER VISION
@@ -121,14 +124,47 @@ try:
                 # check to see if the number of frames with consistent motion is
                 # high enough
                 if motionCounter >= int(min_motion_frames):
-                    #destination = "videos"
-                    # filename = os.path.join(
-                    #    destination, datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S.h264'))
-                    # camera.start_preview()
-                    #camera.start_recording(filename, quality = 30)
-                    modus = random.choice(["button", "creepy"])
-                    speak("Hello, You have activated me.", language="en")
-                    time.sleep(random.randint(0, 9))
+                    play_mp3(make_speech("Wer weckt mich auf? Du hast 10 Sekunden Zeit um mich zu deaktivieren.",
+                                         "de"), random.randint(70, 100), round(np.random.uniform(0.2, 2), 3))
+                    time.sleep(1)
+                    speak("Das Wort ist: Stop.", language="en")
+                    # Listen for spokenword for 10 seconds. Save the recordings!
+                    if random.random() >= 0.5:
+                        transcribedListen = None
+                    else:
+                        firstListen = listen_and_interpret(10, "de-DE")
+                        transcribedListen = firstListen["Transcription"]
+
+                    # If there was speech -> Sleep and exit
+                    if transcribedListen != None:
+                        time.sleep(5 * 60)
+                    else:
+                        # make speech and loudness settings for the path
+                        settings = {
+                            "path": random.choice(
+                                ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
+                            "laut": random.randint(70, 100),
+                            "schnell": round(np.random.uniform(0.3, 1.8), 3),
+                            "lang": random.choice(["de", "en"])
+                        }
+                        if settings["path"] == "button":
+                            # add rising edge detection on a channel
+                            GPIO.add_event_detect(pin, GPIO.BOTH)
+                            while GPIO.event_detected(pin) == False:
+                                button_talk(settings, buttonCounter)
+                            play_mp3("creepy_laugh.mp3", 100, 1.7)
+                        elif settings["path"] == "play_sounds":
+                            chosenSound = random.choice(
+                                glob.glob("sounds/*.mp3"))
+                            play_mp3(chosenSound)
+                        elif settings["path"] == "parrot_raw":
+                            mirrorCounter = 0
+                            while mirrorCounter < 60 * 1:
+                                mirrorLen = random.randint(5, 10)
+                                mirrorCounter += mirrorLen
+                                listen_and_playback(mirrorLen, settings)
+                        elif settings["path"] == "parrot_recog":
+
                     if modus == "button":
                         while GPIO.input(pin) == GPIO.HIGH:
                             time.sleep(0.01)
@@ -140,9 +176,6 @@ try:
                         soundList = glob.glob("sounds/*.mp3")
                         chosenSound = random.choice(soundList)
                         play_mp3(chosenSound)
-                    # camera.stop_recording()
-                    # camera.stop_preview()
-                    #syscmd("omxplayer -o hdmi -b " + destination)
                     # update the last uploaded timestamp and reset the motion
                     # counter
                     lastUploaded = timestamp
