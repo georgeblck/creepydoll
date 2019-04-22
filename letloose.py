@@ -133,11 +133,13 @@ try:
                         transcribedListen = None
                     else:
                         firstListen = listen_and_interpret(10, "de-DE")
-                        transcribedListen = firstListen["Transcription"]
+                        transcribedListen = firstListen["transcription"]
+                        print(transcribedListen)
 
                     # If there was speech -> Sleep and exit
                     if transcribedListen != None:
-                        time.sleep(5 * 60)
+                        print("Sleeping")
+                        time.sleep(10)
                     else:
                         # make speech and loudness settings for the path
                         settings = {
