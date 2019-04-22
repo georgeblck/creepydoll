@@ -1,18 +1,15 @@
-from datetime import datetime, time
-from gtts import gTTS
-import requests
-import json
-import smtplib
-import uuid
 import os
 import subprocess
 import glob
-from string import whitespace
+import uuid
 import pyaudio
 import wave
-from picamera import PiCamera
+import datetime
+import random
 import speech_recognition as sr
-from os.path import basename
+import numpy as np
+from num2words import num2words
+from gtts import gTTS
 
 
 class TempImage:
@@ -26,13 +23,20 @@ class TempImage:
         os.remove(self.path)
 
 
-def record_audio(length=10, filename):
+def syscmd(cmd):
+    DEVNULL = open(os.devnull, 'wb')
+    p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
+                         stdout=DEVNULL, stderr=subprocess.STDOUT)
+    p.wait()
+
+
+def record_wav(length, filename):
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
     RATE = 44100
     CHUNK = 1024
     RECORD_SECONDS = length
-    WAVE_OUTPUT_FILENAME = recordings + filename + ".wav"
+    WAVE_OUTPUT_FILENAME = "recordings/" + filename + ".wav"
     audio = pyaudio.PyAudio()
 
     # start Recording input_device_index = 2
@@ -58,39 +62,83 @@ def record_audio(length=10, filename):
     waveFile.setframerate(RATE)
     waveFile.writeframes(b''.join(frames))
     waveFile.close()
-    syscmd('aplay ' + WAVE_OUTPUT_FILENAME)
+    return WAVE_OUTPUT_FILENAME
 
 
-def record_video(destination):
-    filename = os.path.join(
-        destination, datetime.now().strftime('%Y-%m-%d_%H.%M.%S.h264'))
-    camera.start_preview()
-    camera.start_recording(filename)
+def interpret_wav(wavname, recognizer, lang):
+    if not isinstance(recognizer, sr.Recognizer):
+        raise TypeError("`recognizer` must be `Recognizer` instance")
+
+    wavSource = sr.AudioFile(wavname)
+    with wavSource as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.record(source)
+
+    # set up the response object
+    response = {
+        "success": True,
+        "error": None,
+        "transcription": None
+    }
+
+    # try recognizing the speech in the recording
+    # if a RequestError or UnknownValueError exception is caught,
+    #     update the response object accordingly
+    try:
+        response["transcription"] = recognizer.recognize_google(
+            audio, language=lang)
+    except sr.RequestError:
+        # API was unreachable or unresponsive
+        response["success"] = False
+        response["error"] = "API unavailable"
+    except sr.UnknownValueError:
+        # speech was unintelligible
+        response["error"] = "Unable to recognize speech"
+
+    return response
 
 
-def finish_video():
-    camera.stop_recording()
-    camera.stop_preview()
+def listen_and_interpret(len, lang="de-DE"):
+    # Record audio for a given time
+    wav_name = record_wav(
+        len, "sleep" + datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
+    r = sr.Recognizer()
+    # Analyze recorder audio with google
+    return interpret_wav(wav_name, r, lang)
 
 
-def speak(speech, language="de"):
+def listen_and_playback(len, settings, interpret=False, lang="de-DE"):
+    # Record audio for a given time
+    wav_name = record_wav(
+        len, "playback" + datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
+    # Interpet and play back if wanted
+    if interpret:
+        r = sr.Recognizer()
+        talked = interpret_wav(wav_name, r, lang)
+        play_mp3(make_speech(talked["transcription"],
+                             "de"), settings["laut"], settings["schnell"])
+    else:
+        play_mp3(wav_name, settings["laut"], settings["schnell"])
+
+# Make Speech with gtts
+
+
+def make_speech(speech, language):
     filename = 'speak.mp3'
     tts = gTTS(text=speech, lang=language).save(filename)
-    play_sound(filename)
+    return filename
 
 
-def syscmd(cmd):
-    from subprocess import Popen, PIPE, STDOUT
-    DEVNULL = open(os.devnull, 'wb')
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=DEVNULL, stderr=STDOUT)
-    p.wait()
-
-
-def play_sound(filename, loudness=100):
+def play_mp3(filename, loudness=100, speed=1):
     """ Helper function to play audio files in Linux """
     play_cmd = "mplayer -volume {} -speed {} ./{}".format(
-        loudness, 1, filename)
+        loudness, speed, filename)
     syscmd(play_cmd)
+
+
+def button_talk(settings, counter):
+    play_mp3(make_speech(num2words(counter, lang=settings["lang"]) + " people have pushed my button. Please push the button. I want you to push my button.",
+                         settings["lang"]), settings["laut"], settings["schnell"])
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -102,5 +150,5 @@ def is_time_between(begin_time, end_time, check_time=None):
         return check_time >= begin_time or check_time <= end_time
 
 
-def play_mp3(path):
-    subprocess.Popen(['mpg123', '-q', path]).wait()
+# def play_mp3(path):
+#    subprocess.Popen(['mpg123', '-q', path]).wait()

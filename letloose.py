@@ -2,6 +2,7 @@
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from utils import *
+#from pi_utils import *
 import argparse
 import warnings
 import datetime
@@ -17,7 +18,6 @@ import numpy as np
 from num2words import num2words
 
 # make options
-show_video = False
 min_upload_seconds = 0.1
 min_motion_frames = 6
 camera_warmup_time = 1
@@ -127,7 +127,7 @@ try:
                     play_mp3(make_speech("Wer weckt mich auf? Du hast 10 Sekunden Zeit um mich zu deaktivieren.",
                                          "de"), random.randint(70, 100), round(np.random.uniform(0.2, 2), 3))
                     time.sleep(1)
-                    speak("Das Wort ist: Stop.", language="en")
+                    #speak("Das Wort ist: Stop.", language="en")
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     if random.random() >= 0.5:
                         transcribedListen = None
@@ -143,8 +143,8 @@ try:
                         settings = {
                             "path": random.choice(
                                 ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                            "laut": random.randint(70, 100),
-                            "schnell": round(np.random.uniform(0.3, 1.8), 3),
+                            "laut": random.randint(80, 100),
+                            "schnell": round(np.random.uniform(0.4, 1.7), 3),
                             "lang": random.choice(["de", "en"])
                         }
                         if settings["path"] == "button":
@@ -152,6 +152,7 @@ try:
                             GPIO.add_event_detect(pin, GPIO.BOTH)
                             while GPIO.event_detected(pin) == False:
                                 button_talk(settings, buttonCounter)
+                            buttonCounter += 1
                             play_mp3("creepy_laugh.mp3", 100, 1.7)
                         elif settings["path"] == "play_sounds":
                             chosenSound = random.choice(
@@ -164,18 +165,13 @@ try:
                                 mirrorCounter += mirrorLen
                                 listen_and_playback(mirrorLen, settings)
                         elif settings["path"] == "parrot_recog":
-
-                    if modus == "button":
-                        while GPIO.input(pin) == GPIO.HIGH:
-                            time.sleep(0.01)
-                            speak("Push the button. Push the button.",
-                                  language="de")
-                    elif modus == "mirror":
-                        record_audio()
-                    else:
-                        soundList = glob.glob("sounds/*.mp3")
-                        chosenSound = random.choice(soundList)
-                        play_mp3(chosenSound)
+                            mirrorCounter = 0
+                            while mirrorCounter < 60 * 1:
+                                mirrorLen = random.randint(5, 10)
+                                mirrorCounter += mirrorLen
+                                listen_and_playback(mirrorLen, settings, True)
+                        else:
+                            print("Not yet implemented")
                     # update the last uploaded timestamp and reset the motion
                     # counter
                     lastUploaded = timestamp
@@ -184,21 +180,6 @@ try:
         # otherwise, the room is not occupied
         else:
             motionCounter = 0
-
-        # check to see if the frames should be displayed to screen
-        if show_video:
-            # display the security feed
-            cv2.imshow("Security Feed", frame)
-            key = cv2.waitKey(1) & 0xFF
-
-            if debug_mode:
-                cv2.imshow('Debug blurred gray frame', gray)
-                cv2.imshow('Debug threshold frame', thresh)
-
-            # if the `q` key is pressed, break from the lop
-            if key == ord("q"):
-                break
-
         # clear the stream in preparation for the next frame
         rawCapture.truncate(0)
 
