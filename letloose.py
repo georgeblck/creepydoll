@@ -2,7 +2,7 @@
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from utils import *
-#from pi_utils import *
+# from pi_utils import *
 import argparse
 import warnings
 import datetime
@@ -37,6 +37,10 @@ camera = PiCamera()
 camera.resolution = tuple(resolution)
 camera.framerate = fps
 rawCapture = PiRGBArray(camera, size=tuple(resolution))
+
+while not is_time_between(datetime.time(8, 00), datetime.time(15, 30)):
+    print("Not yet time")
+    time.sleep(60)
 
 # allow the camera to warmup, then initialize the average frame, last
 # uploaded timestamp, and frame motion counter
@@ -124,32 +128,32 @@ try:
                 # check to see if the number of frames with consistent motion is
                 # high enough
                 if motionCounter >= int(min_motion_frames):
-                    play_mp3(make_speech("Du hast mich aufgeweckt. Ich gebe dir 10 Sekunden Zeit um mich zu deaktivieren.",
-                                         "de"), 100, round(np.random.uniform(0.4, 2), 3))
-                    time.sleep(1)
-                    play_mp3(make_speech("Du Ficker.",
-                                         "de"), 100, 2)
+                    # make random speech settings
+                    settings = {
+                        "path": random.choice(
+                            ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
+                        "laut": random.randint(80, 100),
+                        # "schnell": round(np.random.normal(1.4, 0.25), 3),
+                        "pitch": random.randint(-2, 8),
+                        "lang": random.choice(["de", "en"])
+                    }
+                    speak("Du hast mich aufgeweckt. Ich gebe dir 10 Sekunden Zeit um mich zu deaktivieren.",
+                          settings["lang"], settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     if random.random() >= 0.5:
                         transcribedListen = None
                     else:
-                        firstListen = listen_and_interpret(10, "de-DE")
+                        firstListen = listen_and_interpret(10)
                         transcribedListen = firstListen["transcription"]
                         print(transcribedListen)
 
                     # If there was speech -> Sleep and exit
-                    if transcribedListen != None:
+                    if re.search(r'stop|schlaf|aus', transcribedListen):
                         print("Sleeping")
                         time.sleep(10)
                     else:
-                        # make speech and loudness settings for the path
-                        settings = {
-                            "path": random.choice(
-                                ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                            "laut": random.randint(90, 100),
-                            "schnell": round(np.random.uniform(0.4, 1.7), 3),
-                            "lang": random.choice(["de", "en"])
-                        }
+                        speak("Du Stück. Jetzt bin ich wach. Lass uns spielen.",
+                              settings["lang"], settings["pitch"])
                         if settings["path"] == "button":
                             # add rising edge detection on a channel
                             GPIO.add_event_detect(pin, GPIO.BOTH)
@@ -158,6 +162,7 @@ try:
                             buttonCounter += 1
                             play_mp3("creepy_laugh.mp3", 100, 1.8)
                         elif settings["path"] == "play_sounds":
+                            play_mp3(make_speech("Psssst."))
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
                             play_mp3(chosenSound)

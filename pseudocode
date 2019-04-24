@@ -1,0 +1,42 @@
+motion/face recognition:
+ button_counter = 0
+  if movement
+    speak("Du hast mich aktiviert. Sag in 10 Sekunden stop um mich zu deaktivieren")
+    if rbinom = TRUE
+      listen = listen()
+    else
+      listen = None
+    if listen = stop
+     sleep(5 Minutes)
+    else:
+      switch.statement=()
+      choose.random = loudness & speed
+      if button:
+        speak("x people have pushed my button. please push my button")
+        recursive speak and event_detected()
+        if event_detected()
+          button_counter +=
+          play_mp3("evillaugh")
+        elif
+          speak("fuck you")
+          play_mp3("squeal")
+      elif mirror_basic:
+        for loop
+        record.length = random
+        sleep.length = random
+        record_and_play_back(record.length)
+        time.sleep(sleep.length)
+      elif mirror_parrot_machine:
+        for loop
+        record.length = random
+        sleep.length = random
+        listen_and_play_back(record.length)
+        time.sleep(sleep.length)
+      elif mirror_bundestag
+        listen(record_length)
+        find_match(bundstag)
+        speak(matched_text)
+      elif play_sounds:
+        random.choice = glob(sounds)
+        play_mp3(randomchoice)
+      

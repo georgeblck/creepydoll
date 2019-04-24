@@ -8,6 +8,7 @@ import datetime
 import random
 import speech_recognition as sr
 import numpy as np
+import librosa
 from num2words import num2words
 from gtts import gTTS
 
@@ -65,7 +66,7 @@ def record_wav(length, filename):
     return WAVE_OUTPUT_FILENAME
 
 
-def interpret_wav(wavname, recognizer, lang):
+def interpret_wav(wavname, recognizer, lang="de-DE"):
     if not isinstance(recognizer, sr.Recognizer):
         raise TypeError("`recognizer` must be `Recognizer` instance")
 
@@ -115,40 +116,51 @@ def listen_and_playback(len, settings, interpret=False, lang="de-DE"):
     if interpret:
         r = sr.Recognizer()
         talked = interpret_wav(wav_name, r, lang)
-        play_mp3(make_speech(talked["transcription"],
-                             "de"), settings["laut"], settings["schnell"])
+        play_audio(make_speech(talked["transcription"],
+                               "de"), settings["laut"], settings["schnell"])
     else:
-        play_mp3(wav_name, settings["laut"], settings["schnell"])
+        play_audio(wav_name, settings["laut"], settings["schnell"])
 
-# Make Speech with gtts
+
+def speak(talk, language, pitch):
+    play_audio(make_speech(talk, language), pitch)
 
 
 def make_speech(speech, language):
-    filename = 'speak.mp3'
+    filename = 'speak.wav'
     tts = gTTS(text=speech, lang=language).save(filename)
     return filename
 
 
-def play_mp3(filename, loudness=100, speed=1):
+def transform_wav(wavname, steps=4, rate=44100):
+    y, sr = librosa.load(wavname, sr=rate)
+    y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
+    librosa.output.write_wav(wavname, y_shifted, sr)
+    # return re.sub(".wav", "_trans.wav", wavname)
+    return wavname
+
+
+def play_audio(filename, pitcher, oldpitch=False):
     """ Helper function to play audio files in Linux """
-    play_cmd = "mplayer -volume {} -speed {} ./{}".format(
-        loudness, speed, filename)
+    if pitcher != 0:
+        filename = transform_wav(filename, steps=pitcher)
+    play_cmd = "mplayer -volume 100 ./{}".format(filename)
     syscmd(play_cmd)
 
 
 def button_talk(settings, counter):
-    play_mp3(make_speech(num2words(counter, lang=settings["lang"]) + " people have pushed my button. Please push the button. I want you to push my button.",
-                         settings["lang"]), settings["laut"], settings["schnell"])
+    play_audio(make_speech(num2words(counter, lang="en") + " people have pushed my button. Please push the button. I want you to push my button.",
+                           settings["lang"]), settings["laut"], settings["schnell"])
 
 
 def is_time_between(begin_time, end_time, check_time=None):
     # If check time is not given, default to current UTC time
-    check_time = check_time or datetime.utcnow().time()
+    check_time = check_time or datetime.datetime.utcnow().time()
     if begin_time < end_time:
         return check_time >= begin_time and check_time <= end_time
     else:  # crosses midnight
         return check_time >= begin_time or check_time <= end_time
 
 
-# def play_mp3(path):
+# def play_audio(path):
 #    subprocess.Popen(['mpg123', '-q', path]).wait()
