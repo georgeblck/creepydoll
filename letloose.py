@@ -130,8 +130,8 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("omxplayer --loop -o local --vol -3000 " +
-                           ambiente, False)
+                    syscmd("omxplayer --loop -o local --vol -3000 "
+                           + ambiente, False)
                     # make random speech settings
                     settings = {
                         "path": random.choice(
@@ -142,10 +142,7 @@ try:
                     speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten musst du mit mir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
-                    if random.random() >= 0.5:
-                        transcribedListen = "stop"
-                    else:
-                        transcribedListen = "Nichs"
+                    truth = random.choice([1, 2])
                     # else:
                     #firstListen = listen_and_interpret(10)
                     #transcribedListen = firstListen["transcription"]
@@ -154,7 +151,7 @@ try:
                     #yas = recognize_speech_from_mic(recognizer, microphone)
                     # print(yas["transcription"])
                     # If there was speech -> Sleep and exit
-                    if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
+                    if truth == 1:
                         speak(
                             u"Da hast du wohl mal kein Pech gehabt. Gute Nacht und auf Bald. Wir sehen uns wenn du die Augen zumachst.", settings["pitch"])
                         syscmd("killall mplayer")
@@ -187,8 +184,8 @@ try:
                                 "Psssst. Ich zeig dir mal eine Geschichte. Sei ganz leise.", settings["pitch"])
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
-                            syscmd("omxplayer --loop -o local --vol 5000 " +
-                                   chosenSound, False)
+                            syscmd("omxplayer --loop -o local --vol 5000 "
+                                   + chosenSound, False)
                             time.sleep(30)
                             speak(
                                 "Ich habe keinen Mund und ich muss schreien!", settings["pitch"])
