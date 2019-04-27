@@ -130,7 +130,7 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("omxplayer --loop -o local --vol -1250 " +
+                    syscmd("omxplayer --loop -o local --vol -2500 " +
                            ambiente, False)
                     # make random speech settings
                     settings = {
@@ -142,8 +142,8 @@ try:
                     speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten musst du mit mir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
-                    # if random.random() >= 0.5:
-                    transcribedListen = None
+                    if random.random() >= 0.5:
+                        transcribedListen = None
                     # else:
                     #firstListen = listen_and_interpret(10)
                     #transcribedListen = firstListen["transcription"]
@@ -161,7 +161,7 @@ try:
                     else:
                         speak(
                             u"Gut! Gut, gut, sehr gut. Jetzt bin ich wach. Lass uns ein bisschen Spass haben. Wenn man das so nennen darf.", settings["pitch"])
-                        settings["path"] = "parrot_raw"
+                        settings["path"] = "play_sounds"
                         if settings["path"] == "button":
                             speak(
                                 "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
@@ -213,7 +213,7 @@ try:
                             u"Jetzt gehe ich wieder schlafen. Eine kurze Weile. Bleib bei mir und umarme mich.", settings["pitch"])
                         syscmd("killall mplayer")
                         syscmd("killall omxplayer.bin")
-                        time.sleep(120)
+                        time.sleep(5*60)
 
                     # update the last uploaded timestamp and reset the motion
                     # counter
