@@ -126,22 +126,23 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("omxplayer --loop -o local --vol -500 " + ambiente, False)
+                    syscmd("omxplayer --loop -o local --vol -1500 " +
+                           ambiente, False)
                     # make random speech settings
                     settings = {
                         "path": random.choice(
                             ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                        "pitch": random.randint(2,7)
+                        "pitch": random.randint(3, 9)
                     }
                     speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
-                    #if random.random() >= 0.5:
+                    # if random.random() >= 0.5:
                     transcribedListen = None
-                    #else:
-                    #firstListen = listen_and_interpret(10)
+                    # else:
+                    firstListen = listen_and_interpret(10)
                     #transcribedListen = firstListen["transcription"]
-                    #print(transcribedListen)
+                    # print(transcribedListen)
 
                     if transcribedListen is None:
                         transcribedListen = "Nichts"
@@ -158,20 +159,21 @@ try:
                             speak(
                                 "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
                             speak(
-                                u"Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden.", settings["pitch"])
+                                u"Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden. Drück mein Auge.", settings["pitch"])
                             make_speech(num2words(
                                 buttonCounter, lang="de") + u" Menschen haben mich schon gedrückt. Streichel mein Auge. Drück mein Auge.")
-                            volume = 55
-                            pitch = -5
+                            volume = 80
+                            pitch = 0
                             while GPIO.event_detected(pin) == False:
                                 volume += 5
-                                pitch += 1
+                                pitch += 2
                                 transform_wav("speak.wav", pitch)
                                 syscmd(
                                     "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), 1), True)
                             buttonCounter += 1
                             syscmd(
-                                "mplayer -volume 100 -speed 1.7 creepy_laugh.mp3", True)
+                                "mplayer -volume 100 -speed 1.7 creepy_laugh.mp3", False)
+                            time.sleep(30)
                         elif settings["path"] == "play_sounds":
                             speak(
                                 "Psssst. Ich erzähl dir mal eine Geschichte. Sei ganz leise.", settings["pitch"])
@@ -214,9 +216,11 @@ try:
                             print("Not yet implemented")
 
                         speak(
-                            "Jetzt gehe ich wieder schlafen für eine Weile. Bleib bei mir und umarme mich.", settings["pitch"])
+                            u"Jetzt gehe ich wieder schlafen für eine Weile. Bleib bei mir und umarme mich.", settings["pitch"])
+                        syscmd("killall mplayer")
+                        syscmd("killall omxplayer.bin")
                         time.sleep(120)
-                    syscmd("killall mplayer")
+
                     # update the last uploaded timestamp and reset the motion
                     # counter
                     lastUploaded = timestamp

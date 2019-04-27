@@ -34,17 +34,17 @@ def syscmd(cmd, waiting=True):
         p.wait()
 
 
-def record_wav(length, filename, chan=1, rat=11000, chk=1024):
+def record_wav(length, filename, chan=1, rat=11000, chk=256):
     FORMAT = pyaudio.paInt16
-    CHANNELS = chan#1
-    RATE = rat#11000
-    CHUNK = chk#1024
+    CHANNELS = chan  # 1
+    RATE = rat  # 11000
+    CHUNK = chk  # 1024
     RECORD_SECONDS = length
     WAVE_OUTPUT_FILENAME = "recordings/" + filename + ".wav"
     audio = pyaudio.PyAudio()
     print(WAVE_OUTPUT_FILENAME)
     # start Recording
-    stream = audio.open(format=FORMAT, channels=CHANNELS, input_device_index=2,
+    stream = audio.open(format=FORMAT, channels=CHANNELS, input_device_index=0,
                         rate=RATE, input=True,
                         frames_per_buffer=CHUNK)
     print "recording..."
@@ -56,9 +56,9 @@ def record_wav(length, filename, chan=1, rat=11000, chk=1024):
     print "finished recording"
 
     # stop Recording
-    #stream.stop_stream()
+    # stream.stop_stream()
     stream.close()
-    #audio.terminate()
+    # audio.terminate()
 
     waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
     waveFile.setnchannels(CHANNELS)
