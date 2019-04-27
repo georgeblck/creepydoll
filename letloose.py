@@ -139,7 +139,7 @@ try:
                     if random.random() >= 0.5:
                         transcribedListen = None
                     else:
-                        firstListen = listen_and_interpret(10)
+                        #firstListen = listen_and_interpret(10)
                         transcribedListen = firstListen["transcription"]
                         print(transcribedListen)
 
