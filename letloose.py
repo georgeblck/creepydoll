@@ -19,6 +19,7 @@ import RPi.GPIO as GPIO
 import numpy as np
 from num2words import num2words
 import re as regexp
+import speech_recognition as sr
 
 #
 
@@ -38,6 +39,9 @@ pin = 23
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(pin, GPIO.BOTH, bouncetime=10000)
+
+recognizer = sr.Recognizer()
+microphone = sr.Microphone()
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
@@ -140,10 +144,11 @@ try:
                     # if random.random() >= 0.5:
                     transcribedListen = None
                     # else:
-                    firstListen = listen_and_interpret(10)
+                    #firstListen = listen_and_interpret(10)
                     #transcribedListen = firstListen["transcription"]
                     # print(transcribedListen)
-
+                    yas = recognize_speech_from_mic(recognizer, microphone)
+                    print(yas["transcription"])
                     if transcribedListen is None:
                         transcribedListen = "Nichts"
                     # If there was speech -> Sleep and exit

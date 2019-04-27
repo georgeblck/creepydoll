@@ -207,7 +207,7 @@ def recognize_speech_from_mic(recognizer, microphone):
         azKey = random.choice(
             ["929ceac53b6144b98bf2bcec94077198", "e887f21dfd9649f5a2264f2540990de3"])
         response["transcription"] = recognizer.recognize_azure(
-            audio, key=azKey, language=lang)
+            audio, key=azKey, language="de-DE")
     except sr.RequestError:
         # API was unreachable or unresponsive
         response["success"] = False
