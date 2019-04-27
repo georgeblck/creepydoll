@@ -1,3 +1,5 @@
+# -*- encoding: iso-8859-15 -*-
+
 # import the necessary packages
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -17,6 +19,9 @@ import RPi.GPIO as GPIO
 import numpy as np
 from num2words import num2words
 
+#
+
+
 # make options
 min_upload_seconds = 0.1
 min_motion_frames = 6
@@ -31,6 +36,7 @@ pin = 23
 # init GPIO shit
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(pin, GPIO.BOTH, bouncetime=10000)
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
@@ -95,19 +101,7 @@ try:
             # if the contour is too small, ignore it
             if cv2.contourArea(c) < min_area:
                 continue
-
-            # compute the bounding box for the contour, draw it on the frame,
-            # and update the text
-            (x, y, w, h) = cv2.boundingRect(c)
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             text = "Occupied"
-
-        # draw the text and timestamp on the frame
-        ts = timestamp.strftime("%A %d %B %Y %I:%M:%S%p")
-        cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-        cv2.putText(frame, ts, (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.35, (0, 0, 255), 1)
 
         ###################################################################################
         # LOGIC
@@ -128,17 +122,17 @@ try:
                 # check to see if the number of frames with consistent motion is
                 # high enough
                 if motionCounter >= int(min_motion_frames):
+                    ambiente = random.choice(
+                        glob.glob("ambient/*.mp3"))
+                    syscmd("mplayer -volume 75 -loop 0 " + ambiente, False)
+                    time.sleep(5)
                     # make random speech settings
                     settings = {
                         "path": random.choice(
                             ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                        "laut": random.randint(80, 100),
-                        # "schnell": round(np.random.normal(1.4, 0.25), 3),
-                        "pitch": random.randint(-2, 8),
-                        "lang": random.choice(["de", "en"])
+                        "pitch": random.randint(4, 9)
                     }
-                    speak("Du hast mich aufgeweckt. Ich gebe dir 10 Sekunden Zeit um mich zu deaktivieren.",
-                          settings["lang"], settings["pitch"])
+                    speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.")
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     if random.random() >= 0.5:
                         transcribedListen = None
@@ -149,29 +143,53 @@ try:
 
                     # If there was speech -> Sleep and exit
                     if re.search(r'stop|schlaf|aus', transcribedListen):
-                        print("Sleeping")
+                        speak(
+                            "Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.")
                         time.sleep(10)
                     else:
-                        speak("Du Stück. Jetzt bin ich wach. Lass uns spielen.",
-                              settings["lang"], settings["pitch"])
+                        speak("Du Stück. Jetzt bin ich wach. Lass uns spielen.")
                         if settings["path"] == "button":
-                            # add rising edge detection on a channel
-                            GPIO.add_event_detect(pin, GPIO.BOTH)
+                            speak(
+                                "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?")
+                            speak(
+                                "Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden.")
+                            make_speech(num2words(
+                                buttonCounter, lang="de") + u" Menschen haben mich gedrückt. Streichel mein Auge. Drück mein Auge.")
+                            volume = 60
                             while GPIO.event_detected(pin) == False:
-                                button_talk(settings, buttonCounter)
+                                volume += 5
+                                pitch += 1
+                                transform_wav("speak.wav", pitch)
+                                syscmd(
+                                    "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), 1), True)
                             buttonCounter += 1
-                            play_mp3("creepy_laugh.mp3", 100, 1.8)
+                            syscmd(
+                                "mplayer -volume 100 -speed 1.7 creepy_laugh.mp3", False)
                         elif settings["path"] == "play_sounds":
-                            play_mp3(make_speech("Psssst."))
+                            speak(
+                                "Psssst. Ich erzähl dir mal eine Geschichte. Sei ganz leise.")
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
-                            play_mp3(chosenSound)
+                            play_audio(chosenSound, True)
+                            speak("Ich habe keinen Mund und ich muss schreien!")
+                            speak("Macht das nicht Spaß?")
                         elif settings["path"] == "parrot_raw":
+                            speak(
+                                "Komm näher näher näher und erzähl mir eine kleine Geschichte. Deine Stimme klingt so schön.")
+                            speak(
+                                "Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.")
                             mirrorCounter = 0
                             while mirrorCounter < 60 * 1:
                                 mirrorLen = random.randint(5, 10)
                                 mirrorCounter += mirrorLen
-                                listen_and_playback(mirrorLen, settings)
+                                tempwav = record_wav(
+                                    mirrorLen, "record" + datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
+                                if random.random() >= 0.5:
+                                    play_audio(tempwav, pitch)
+                                else:
+                                    randwav = random.choice(
+                                        glob.glob("recordings/*.wav"))
+                                    play_audio(randwav, pitch)
                         elif settings["path"] == "parrot_recog":
                             mirrorCounter = 0
                             while mirrorCounter < 60 * 1:
@@ -180,6 +198,11 @@ try:
                                 listen_and_playback(mirrorLen, settings, True)
                         else:
                             print("Not yet implemented")
+
+                        speak(
+                            "Jetzt gehe ich wieder schlafen für eine Weile. Bleib bei mir und umarme mich.")
+                        time.sleep(120)
+                    syscmd("killall mplayer")
                     # update the last uploaded timestamp and reset the motion
                     # counter
                     lastUploaded = timestamp

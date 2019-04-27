@@ -1,3 +1,5 @@
+# -*- encoding: iso-8859-15 -*-
+
 import os
 import subprocess
 import glob
@@ -24,17 +26,18 @@ class TempImage:
         os.remove(self.path)
 
 
-def syscmd(cmd):
+def syscmd(cmd, waiting=True):
     DEVNULL = open(os.devnull, 'wb')
     p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
                          stdout=DEVNULL, stderr=subprocess.STDOUT)
-    p.wait()
+    if waiting == True:
+        p.wait()
 
 
 def record_wav(length, filename):
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
-    RATE = 44100
+    RATE = 22000
     CHUNK = 1024
     RECORD_SECONDS = length
     WAVE_OUTPUT_FILENAME = "recordings/" + filename + ".wav"
@@ -86,8 +89,12 @@ def interpret_wav(wavname, recognizer, lang="de-DE"):
     # if a RequestError or UnknownValueError exception is caught,
     #     update the response object accordingly
     try:
-        response["transcription"] = recognizer.recognize_google(
-            audio, language=lang)
+        # response["transcription"] = recognizer.recognize_google(
+            # audio, language=lang)
+        azKey = random.choice(
+            ["929ceac53b6144b98bf2bcec94077198", "e887f21dfd9649f5a2264f2540990de3"])
+        response["transcription"] = recognizer.recognize_azure(
+            audio, key=azKey, language=lang)
     except sr.RequestError:
         # API was unreachable or unresponsive
         response["success"] = False
@@ -108,7 +115,7 @@ def listen_and_interpret(len, lang="de-DE"):
     return interpret_wav(wav_name, r, lang)
 
 
-def listen_and_playback(len, settings, interpret=False, lang="de-DE"):
+def listen_and_playback(len, pitcher, interpret=False, lang="de-DE"):
     # Record audio for a given time
     wav_name = record_wav(
         len, "playback" + datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
@@ -119,20 +126,20 @@ def listen_and_playback(len, settings, interpret=False, lang="de-DE"):
         play_audio(make_speech(talked["transcription"],
                                "de"), settings["laut"], settings["schnell"])
     else:
-        play_audio(wav_name, settings["laut"], settings["schnell"])
+        play_audio(wav_name, pitcher)
 
 
-def speak(talk, language, pitch):
-    play_audio(make_speech(talk, language), pitch)
+def speak(speech, language = "de", pitch = 0):
+    play_audio(make_speech(speech, language), pitch)
 
 
-def make_speech(speech, language):
+def make_speech(speech, language = "de"):
     filename = 'speak.wav'
     tts = gTTS(text=speech, lang=language).save(filename)
     return filename
 
 
-def transform_wav(wavname, steps=4, rate=44100):
+def transform_wav(wavname, steps=4, rate=10000):
     y, sr = librosa.load(wavname, sr=rate)
     y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
     librosa.output.write_wav(wavname, y_shifted, sr)
@@ -140,17 +147,12 @@ def transform_wav(wavname, steps=4, rate=44100):
     return wavname
 
 
-def play_audio(filename, pitcher, oldpitch=False):
+def play_audio(filename, pitcher):
     """ Helper function to play audio files in Linux """
     if pitcher != 0:
         filename = transform_wav(filename, steps=pitcher)
     play_cmd = "mplayer -volume 100 ./{}".format(filename)
     syscmd(play_cmd)
-
-
-def button_talk(settings, counter):
-    play_audio(make_speech(num2words(counter, lang="en") + " people have pushed my button. Please push the button. I want you to push my button.",
-                           settings["lang"]), settings["laut"], settings["schnell"])
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -160,7 +162,3 @@ def is_time_between(begin_time, end_time, check_time=None):
         return check_time >= begin_time and check_time <= end_time
     else:  # crosses midnight
         return check_time >= begin_time or check_time <= end_time
-
-
-# def play_audio(path):
-#    subprocess.Popen(['mpg123', '-q', path]).wait()

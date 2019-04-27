@@ -1,18 +1,21 @@
-from utils import *
-import librosa
+#from utils import *
+#import librosa
+import speech_recognition as sr
 
-def transform_wav(wavname, steps = 4, rate = 44100):
-    y, sr = librosa.load(wavname, sr=rate)
-    y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
-    librosa.output.write_wav(wavname, y_shifted, sr)
-    return re.sub(".wav", "_trans.wav", wavname)
+r = sr.Recognizer()
 
-make_speech("In Harry Potter and the Order of Phoenix, we meet one of Harry Potters most hated character, Dolores Umbridge. Can we imagine ourselves into her point of view", "en")
+with sr.AudioFile('testi.wav') as source:
+    audio = r.record(source)
+
+print(r.recognize_azure(audio, key = "929ceac53b6144b98bf2bcec94077198", language = "de-DE"))
+
+
+#make_speech("In Harry Potter and the Order of Phoenix, we meet one of Harry Potters most hated character, Dolores Umbridge. Can we imagine ourselves into her point of view", "en")
 # y is a numpy array of the wav file, sr = sample rate
-y, sr = librosa.load('speak.wav', sr=44100)
-y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=8)  # sh
-librosa.output.write_wav("watup.wav", y_shifted, sr)
-play_mp3("watup.wav")
+#y, sr = librosa.load('speak.wav', sr=44100)
+#y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=8)  # sh
+#librosa.output.write_wav("watup.wav", y_shifted, sr)
+#play_mp3("watup.wav")
 #button_talk(settings, buttonCounter)
 #play_mp3("creepy_laugh.mp3", 100, 1.7)
 #schnell = round(np.random.uniform(0.2,2),3)
