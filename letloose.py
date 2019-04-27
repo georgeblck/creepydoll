@@ -135,7 +135,7 @@ try:
                     # make random speech settings
                     settings = {
                         "path": random.choice(
-                            ["button", "parrot_raw", "play_sounds"]),
+                            ["button", "play_sounds"]),
                         "pitch": random.randint(4, 8)
                     }
                     print("should talk now")
@@ -175,7 +175,7 @@ try:
                                     "mplayer -af volume={}.1:1 -volume 100 -speed {} speak.wav".format(min(volume, 60), pitch), True)
                             buttonCounter += 1
                             syscmd(
-                                "mplayer -af volume=20.1:1 -volume 100 -speed 1.7 creepy_laugh.mp3", False)
+                                "mplayer -af volume=3.1:1 -volume 100 -speed 1.7 creepy_laugh.mp3", False)
                             time.sleep(20)
                         elif settings["path"] == "play_sounds":
                             speak(
