@@ -130,7 +130,7 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("omxplayer --loop -o local --vol -3000 "
+                    syscmd("omxplayer --loop -o local --vol 0 "
                            + ambiente, False)
                     # make random speech settings
                     settings = {
@@ -163,40 +163,36 @@ try:
                         #settings["path"] = "play_sounds"
                         if settings["path"] == "button":
                             speak(
-                                "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
-                            speak(
-                                u"Hilf mir bitte. Du bist doch mein Freund. Und ich will so gerne angefasst werden. Presse mein Augenknopf.", settings["pitch"])
+                                "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat? Hilf mir bitte. Du bist doch mein Freund. Und ich will so gerne angefasst werden. Presse mein Augenknopf.", settings["pitch"])
                             make_speech(num2words(
                                 buttonCounter, lang="de") + u" Menschen haben mich schon angefasst. Streichel mein Auge. Presse mein Augeknopf. Push the button please.")
-                            volume = 70
+                            volume = 0
                             pitch = 1
                             while GPIO.event_detected(pin) == False:
                                 volume += 5
                                 pitch += 0.1
                                 syscmd(
-                                    "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), pitch), True)
+                                    "mplayer -af volume={}.1:1 -volume 100 -speed {} speak.wav".format(min(volume, 60), pitch), True)
                             buttonCounter += 1
                             syscmd(
-                                "mplayer -volume 100 -speed 1.7 creepy_laugh.mp3", False)
-                            time.sleep(30)
+                                "mplayer -af volume=20.1:1 -volume 100 -speed 1.7 creepy_laugh.mp3", False)
+                            time.sleep(20)
                         elif settings["path"] == "play_sounds":
                             speak(
                                 "Psssst. Ich zeig dir mal eine Geschichte. Sei ganz leise.", settings["pitch"])
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
-                            syscmd("omxplayer --loop -o local --vol 5000 "
+                            syscmd("omxplayer --loop -o local --vol 300 --amp 1000 "
                                    + chosenSound, False)
-                            time.sleep(30)
+                            time.sleep(20)
                             speak(
                                 "Ich habe keinen Mund und ich muss schreien!", settings["pitch"])
                             speak("Macht das nicht Spass?", settings["pitch"])
                         elif settings["path"] == "parrot_raw":
                             speak(
-                                "Komm zu mir, komm ganz nah zu mir und fabulier mir eine kleine Geschichte. Deine Stimme klingt soooooo samtig.", settings["pitch"])
-                            speak(
-                                "Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.", settings["pitch"])
+                                "Komm zu mir, komm ganz nah zu mir und fabulier mir eine kleine Geschichte. Deine Stimme klingt soooooo samtig. Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.", settings["pitch"])
                             mirrorCounter = 0
-                            while mirrorCounter < 60 * 1:
+                            while mirrorCounter < 30 * 1:
                                 mirrorLen = random.randint(5, 10)
                                 mirrorCounter += mirrorLen
                                 tempwav = record_wav(
