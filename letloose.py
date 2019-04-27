@@ -156,23 +156,23 @@ try:
                     # If there was speech -> Sleep and exit
                     if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
                         speak(
-                            u"Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
+                            u"Da hast du wohl mal kein Pech gehabt. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
                         time.sleep(10)
                     else:
                         speak(
                             u"Gut! Gut, gut, gut. Jetzt bin ich wach. Lass uns ein bisschen spielen. Wenn man das so nennen darf.", settings["pitch"])
-                        settings["path"] = "button"
+                        settings["path"] = "parrot_raw"
                         if settings["path"] == "button":
                             speak(
                                 "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
                             speak(
-                                u"Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden. Drück mein Auge.", settings["pitch"])
+                                u"Hilf mir bitte. Du bist doch mein Freund. Und ich will so gerne angefasst werden. Presse mein Augenknopf.", settings["pitch"])
                             make_speech(num2words(
-                                buttonCounter, lang="de") + u" Menschen haben mich schon angefasst. Streichel mein Auge. Drück mein Auge.")
+                                buttonCounter, lang="de") + u" Menschen haben mich schon angefasst. Streichel mein Auge. Presse mein Augeknopf. Push the button please.")
                             volume = 70
                             pitch = 1
                             while GPIO.event_detected(pin) == False:
-                                volume += 1
+                                volume += 5
                                 pitch += 0.1
                                 syscmd(
                                     "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), pitch), True)
