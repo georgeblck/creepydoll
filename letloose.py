@@ -29,7 +29,7 @@ camera_warmup_time = 1
 delta_tresh = 5
 blur_size = [21, 21]
 resolution = [1280, 960]
-fps = 20
+fps = 15
 min_area = 10000
 pin = 23
 
@@ -44,9 +44,9 @@ camera.resolution = tuple(resolution)
 camera.framerate = fps
 rawCapture = PiRGBArray(camera, size=tuple(resolution))
 
-while not is_time_between(datetime.time(8, 00), datetime.time(15, 30)):
-    print("Not yet time")
-    time.sleep(60)
+#while not is_time_between(datetime.time(8, 00), datetime.time(15, 30)):
+#    print("Not yet time")
+#    time.sleep(60)
 
 # allow the camera to warmup, then initialize the average frame, last
 # uploaded timestamp, and frame motion counter
