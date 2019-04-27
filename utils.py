@@ -38,13 +38,13 @@ def record_wav(length, filename):
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
     RATE = 22000
-    CHUNK = 1024
+    CHUNK = 512
     RECORD_SECONDS = length
     WAVE_OUTPUT_FILENAME = "recordings/" + filename + ".wav"
     audio = pyaudio.PyAudio()
 
     # start Recording
-    stream = audio.open(format=FORMAT, channels=CHANNELS,input_device_index = 2,
+    stream = audio.open(format=FORMAT, channels=CHANNELS, input_device_index=2,
                         rate=RATE, input=True,
                         frames_per_buffer=CHUNK)
     print "recording..."
@@ -56,9 +56,9 @@ def record_wav(length, filename):
     print "finished recording"
 
     # stop Recording
-    stream.stop_stream()
+    #stream.stop_stream()
     stream.close()
-    audio.terminate()
+    #audio.terminate()
 
     waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
     waveFile.setnchannels(CHANNELS)
@@ -139,7 +139,7 @@ def make_speech(speech, language="de"):
     return filename
 
 
-def transform_wav(wavname, steps=4, rate=44000):
+def transform_wav(wavname, steps=4, rate=7000):
     y, sr = librosa.load(wavname, sr=rate)
     y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
     librosa.output.write_wav(wavname, y_shifted, sr)
@@ -151,7 +151,7 @@ def play_audio(filename, modulate, wait=True):
     """ Helper function to play audio files in Linux """
     if modulate != 0:
         filename = transform_wav(filename, modulate)
-    play_cmd = "mplayer -volume 90 ./{}".format(filename)
+    play_cmd = "mplayer -volume 95 ./{}".format(filename)
     syscmd(play_cmd, wait)
 
 
