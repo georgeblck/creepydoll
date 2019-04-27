@@ -18,6 +18,7 @@ import glob
 import RPi.GPIO as GPIO
 import numpy as np
 from num2words import num2words
+import re
 
 #
 
@@ -122,9 +123,10 @@ try:
                 # check to see if the number of frames with consistent motion is
                 # high enough
                 if motionCounter >= int(min_motion_frames):
+                    print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("mplayer -volume 75 -loop 0 " + ambiente, False)
+                    syscmd("mplayer -volume 80 -loop 0 " + ambiente, False)
                     time.sleep(5)
                     # make random speech settings
                     settings = {
