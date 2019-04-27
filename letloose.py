@@ -26,13 +26,13 @@ import speech_recognition as sr
 
 # make options
 min_upload_seconds = 0.1
-min_motion_frames = 6
+min_motion_frames = 12
 camera_warmup_time = 1
 delta_tresh = 5
 blur_size = [21, 21]
 resolution = [1280, 960]
-fps = 15
-min_area = 10000
+fps = 6
+min_area = 200000
 pin = 23
 
 # init GPIO shit
@@ -130,16 +130,16 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("omxplayer --loop -o local --vol -1500 " +
+                    syscmd("omxplayer --loop -o local --vol -1250 " +
                            ambiente, False)
                     # make random speech settings
                     settings = {
                         "path": random.choice(
                             ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                        "pitch": np.random.normal(1.4, 0.2)
+                        "pitch": random.randint(3,7)
                     }
                     print("should talk now")
-                    old_talk(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
+                    speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     # if random.random() >= 0.5:
@@ -148,27 +148,27 @@ try:
                     #firstListen = listen_and_interpret(10)
                     #transcribedListen = firstListen["transcription"]
                     # print(transcribedListen)
-                    print("i should talk now")
-                    yas = recognize_speech_from_mic(recognizer, microphone)
-                    print(yas["transcription"])
+                    #print("i should talk now")
+                    #yas = recognize_speech_from_mic(recognizer, microphone)
+                    #print(yas["transcription"])
                     if transcribedListen is None:
                         transcribedListen = "Nichts"
                     # If there was speech -> Sleep and exit
                     if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
-                        old_talk(
+                        speak(
                             u"Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
                         time.sleep(10)
                     else:
-                        old_talk(
+                        speak(
                             u"Gut! Gut, gut, gut. Jetzt bin ich wach. Lass uns ein bisschen spielen. Wenn man das so nennen darf.", settings["pitch"])
                         settings["path"] = "button"
                         if settings["path"] == "button":
-                            old_talk(
+                            speak(
                                 "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
-                            old_talk(
+                            speak(
                                 u"Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden. Drück mein Auge.", settings["pitch"])
                             make_speech(num2words(
-                                buttonCounter, lang="de") + u" Menschen haben mich schon gedrückt. Streichel mein Auge. Drück mein Auge.")
+                                buttonCounter, lang="de") + u" Menschen haben mich schon angefasst. Streichel mein Auge. Drück mein Auge.")
                             volume = 70
                             pitch = 1
                             while GPIO.event_detected(pin) == False:
@@ -206,18 +206,6 @@ try:
                                     randwav = random.choice(
                                         glob.glob("recordings/*.wav"))
                                     play_audio(randwav, pitch)
-                        elif settings["path"] == "parrot_recog":
-                            mirrorCounter = 0
-                            while mirrorCounter < 60 * 1:
-                                mirrorLen = random.randint(5, 10)
-                                mirrorCounter += mirrorLen
-                                saidthings = listen_and_interpret(mirrorLen)
-                                if saidthings is not None:
-                                    speak(saidthings, pitch)
-                                else:
-                                    speak("Sag mal was jetzt.",
-                                          settings["pitch"])
-
                         else:
                             print("Not yet implemented")
 
