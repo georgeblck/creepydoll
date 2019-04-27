@@ -136,32 +136,34 @@ try:
                     settings = {
                         "path": random.choice(
                             ["button", "parrot_raw", "play_sounds"]),
-                        "pitch": random.randint(3,7)
+                        "pitch": random.randint(4, 8)
                     }
                     print("should talk now")
                     speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten musst du mit mir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     if random.random() >= 0.5:
-                        transcribedListen = None
+                        transcribedListen = "stop"
+                    else:
+                        transcribedListen = "Nichs"
                     # else:
                     #firstListen = listen_and_interpret(10)
                     #transcribedListen = firstListen["transcription"]
                     # print(transcribedListen)
                     #print("i should talk now")
                     #yas = recognize_speech_from_mic(recognizer, microphone)
-                    #print(yas["transcription"])
-                    if transcribedListen is None:
-                        transcribedListen = "Nichts"
+                    # print(yas["transcription"])
                     # If there was speech -> Sleep and exit
                     if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
                         speak(
                             u"Da hast du wohl mal kein Pech gehabt. Gute Nacht und auf Bald. Wir sehen uns wenn du die Augen zumachst.", settings["pitch"])
-                        time.sleep(10)
+                        syscmd("killall mplayer")
+                        syscmd("killall omxplayer.bin")
+                        time.sleep(5 * 60)
                     else:
                         speak(
-                            u"Gut! Gut, gut, sehr gut. Jetzt bin ich wach. Lass uns ein bisschen Spass haben. Wenn man das so nennen darf.", settings["pitch"])
-                        settings["path"] = "play_sounds"
+                            u"Gut! Gut, sehr gut. Jetzt bin ich wach. Lass uns ein bisschen Spass haben. Wenn man das so nennen darf.", settings["pitch"])
+                        #settings["path"] = "play_sounds"
                         if settings["path"] == "button":
                             speak(
                                 "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
@@ -185,10 +187,12 @@ try:
                                 "Psssst. Ich zeig dir mal eine Geschichte. Sei ganz leise.", settings["pitch"])
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
-                            play_audio(chosenSound, True)
+                            syscmd("omxplayer --loop -o local --vol 5000 " +
+                                   chosenSound, False)
+                            time.sleep(30)
                             speak(
                                 "Ich habe keinen Mund und ich muss schreien!", settings["pitch"])
-                            speak("Macht das nicht Spaß?", settings["pitch"])
+                            speak("Macht das nicht Spass?", settings["pitch"])
                         elif settings["path"] == "parrot_raw":
                             speak(
                                 "Komm zu mir, komm ganz nah zu mir und fabulier mir eine kleine Geschichte. Deine Stimme klingt soooooo samtig.", settings["pitch"])
@@ -213,7 +217,7 @@ try:
                             u"Jetzt gehe ich wieder schlafen. Eine kurze Weile. Bleib bei mir und umarme mich.", settings["pitch"])
                         syscmd("killall mplayer")
                         syscmd("killall omxplayer.bin")
-                        time.sleep(5*60)
+                        time.sleep(5 * 60)
 
                     # update the last uploaded timestamp and reset the motion
                     # counter
@@ -237,6 +241,6 @@ except:
     syscmd("killall omxplayer.bin")
     syscmd("killall mplayer")
     GPIO.cleanup()
-    #sys.exit()
+    # sys.exit()
     print("Unexpected error:", sys.exc_info()[0])
     raise
