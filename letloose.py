@@ -169,7 +169,7 @@ try:
                             volume = 0
                             pitch = 1
                             while GPIO.event_detected(pin) == False:
-                                volume += 5
+                                volume += 2
                                 pitch += 0.1
                                 syscmd(
                                     "mplayer -af volume={}.1:1 -volume 100 -speed {} speak.wav".format(min(volume, 60), pitch), True)

@@ -151,12 +151,12 @@ def play_audio(filename, modulate, wait=True):
     """ Helper function to play audio files in Linux """
     if modulate != 0:
         filename = transform_wav(filename, modulate)
-    play_cmd = "mplayer -af volume=50.1:1 -volume 100 ./{}".format(filename)
+    play_cmd = "mplayer -af volume=20.1:1 -volume 100 ./{}".format(filename)
     syscmd(play_cmd, wait)
 
 def old_talk(text, pitch, waiting = True):
     fname = make_speech(text)
-    play_cmd = "mplayer -af volume=40.1:1 -volume 100 -speed {} ./{}".format(pitch, fname)
+    play_cmd = "mplayer -af volume=20.1:1 -volume 100 -speed {} ./{}".format(pitch, fname)
     syscmd(play_cmd, waiting)
 
 def is_time_between(begin_time, end_time, check_time=None):
