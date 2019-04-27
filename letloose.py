@@ -126,7 +126,7 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("mplayer -volume 70 -loop 0 " + ambiente, False)
+                    syscmd("omxplayer --loop -o local --vol -500 " + ambiente, False)
                     # make random speech settings
                     settings = {
                         "path": random.choice(
@@ -136,12 +136,12 @@ try:
                     speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
-                    if random.random() >= 0.5:
-                        transcribedListen = None
-                    else:
-                        #firstListen = listen_and_interpret(10)
-                        transcribedListen = firstListen["transcription"]
-                        print(transcribedListen)
+                    #if random.random() >= 0.5:
+                    transcribedListen = None
+                    #else:
+                    #firstListen = listen_and_interpret(10)
+                    #transcribedListen = firstListen["transcription"]
+                    #print(transcribedListen)
 
                     if transcribedListen is None:
                         transcribedListen = "Nichts"
