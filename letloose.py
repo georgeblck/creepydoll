@@ -45,7 +45,7 @@ camera.resolution = tuple(resolution)
 camera.framerate = fps
 rawCapture = PiRGBArray(camera, size=tuple(resolution))
 
-#while not is_time_between(datetime.time(8, 00), datetime.time(15, 30)):
+# while not is_time_between(datetime.time(8, 00), datetime.time(15, 30)):
 #    print("Not yet time")
 #    time.sleep(60)
 
@@ -127,7 +127,6 @@ try:
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
                     syscmd("mplayer -volume 90 -loop 0 " + ambiente, False)
-                    time.sleep(5)
                     # make random speech settings
                     settings = {
                         "path": random.choice(
