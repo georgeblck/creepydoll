@@ -32,7 +32,7 @@ delta_tresh = 5
 blur_size = [21, 21]
 resolution = [1280, 960]
 fps = 6
-min_area = 200000
+min_area = 250000
 pin = 23
 
 # init GPIO shit
@@ -156,11 +156,11 @@ try:
                     # If there was speech -> Sleep and exit
                     if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
                         speak(
-                            u"Da hast du wohl mal kein Pech gehabt. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
+                            u"Da hast du wohl mal kein Pech gehabt. Gute Nacht und auf Bald. Wir sehen uns wenn du die Augen zumachst.", settings["pitch"])
                         time.sleep(10)
                     else:
                         speak(
-                            u"Gut! Gut, gut, gut. Jetzt bin ich wach. Lass uns ein bisschen Spass haben. Wenn man das so nennen darf.", settings["pitch"])
+                            u"Gut! Gut, gut, sehr gut. Jetzt bin ich wach. Lass uns ein bisschen Spass haben. Wenn man das so nennen darf.", settings["pitch"])
                         settings["path"] = "parrot_raw"
                         if settings["path"] == "button":
                             speak(
@@ -182,7 +182,7 @@ try:
                             time.sleep(30)
                         elif settings["path"] == "play_sounds":
                             speak(
-                                "Psssst. Ich erzähl dir mal eine Geschichte. Sei ganz leise.", settings["pitch"])
+                                "Psssst. Ich zeig dir mal eine Geschichte. Sei ganz leise.", settings["pitch"])
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
                             play_audio(chosenSound, True)
@@ -191,7 +191,7 @@ try:
                             speak("Macht das nicht Spaß?", settings["pitch"])
                         elif settings["path"] == "parrot_raw":
                             speak(
-                                "Komm zu mir, komm ganz nah zu mir und  fabulier mir eine kleine Geschichte. Deine Stimme klingt so samtig.", settings["pitch"])
+                                "Komm zu mir, komm ganz nah zu mir und fabulier mir eine kleine Geschichte. Deine Stimme klingt soooooo samtig.", settings["pitch"])
                             speak(
                                 "Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.", settings["pitch"])
                             mirrorCounter = 0
@@ -201,7 +201,7 @@ try:
                                 tempwav = record_wav(
                                     mirrorLen, "record" + datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
                                 if random.random() >= 0.5:
-                                    play_audio(tempwav, pitch)
+                                    play_audio(tempwav, settings["pitch"])
                                 else:
                                     randwav = random.choice(
                                         glob.glob("recordings/*.wav"))
@@ -210,7 +210,7 @@ try:
                             print("Not yet implemented")
 
                         speak(
-                            u"Jetzt gehe ich wieder schlafen für eine Weile. Bleib bei mir und umarme mich.", settings["pitch"])
+                            u"Jetzt gehe ich wieder schlafen. Eine kurze Weile. Bleib bei mir und umarme mich.", settings["pitch"])
                         syscmd("killall mplayer")
                         syscmd("killall omxplayer.bin")
                         time.sleep(120)
@@ -232,3 +232,11 @@ except KeyboardInterrupt:
     syscmd("killall mplayer")
     GPIO.cleanup()
     sys.exit()
+except:
+    camera.close()
+    syscmd("killall omxplayer.bin")
+    syscmd("killall mplayer")
+    GPIO.cleanup()
+    #sys.exit()
+    print("Unexpected error:", sys.exc_info()[0])
+    raise
