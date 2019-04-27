@@ -205,7 +205,7 @@ try:
                                 else:
                                     randwav = random.choice(
                                         glob.glob("recordings/*.wav"))
-                                    play_audio(randwav, pitch)
+                                    play_audio(randwav, settings["pitch"])
                         else:
                             print("Not yet implemented")
 
