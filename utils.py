@@ -34,7 +34,7 @@ def syscmd(cmd, waiting=True):
         p.wait()
 
 
-def record_wav(length, filename):
+def record_wav(length, filename, chan, rat, chl):
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 11000
