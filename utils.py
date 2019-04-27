@@ -139,7 +139,7 @@ def make_speech(speech, language="de"):
     return filename
 
 
-def transform_wav(wavname, steps=4, rate=10000):
+def transform_wav(wavname, steps=4, rate=11000):
     y, sr = librosa.load(wavname, sr=rate)
     y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
     librosa.output.write_wav(wavname, y_shifted, sr)

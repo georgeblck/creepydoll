@@ -126,12 +126,12 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("mplayer -volume 80 -loop 0 " + ambiente, False)
+                    syscmd("mplayer -volume 70 -loop 0 " + ambiente, False)
                     # make random speech settings
                     settings = {
                         "path": random.choice(
                             ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                        "pitch": random.randint(3, 9)
+                        "pitch": random.randint(2,7)
                     }
                     speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
                           settings["pitch"])
@@ -162,10 +162,11 @@ try:
                             make_speech(num2words(
                                 buttonCounter, lang="de") + u" Menschen haben mich schon gedrückt. Streichel mein Auge. Drück mein Auge.")
                             volume = 55
+                            pitch = -5
                             while GPIO.event_detected(pin) == False:
                                 volume += 5
-                                settings["pitch"] += 1
-                                transform_wav("speak.wav", settings["pitch"])
+                                pitch += 1
+                                transform_wav("speak.wav", pitch)
                                 syscmd(
                                     "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), 1), True)
                             buttonCounter += 1
