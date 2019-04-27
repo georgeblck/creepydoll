@@ -143,6 +143,8 @@ try:
                         transcribedListen = firstListen["transcription"]
                         print(transcribedListen)
 
+                    if transcribedListen is None:
+                        transcribedListen = "Nichts"
                     # If there was speech -> Sleep and exit
                     if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
                         speak(
