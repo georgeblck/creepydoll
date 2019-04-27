@@ -26,13 +26,13 @@ import speech_recognition as sr
 
 # make options
 min_upload_seconds = 0.1
-min_motion_frames = 12
+min_motion_frames = 9
 camera_warmup_time = 1
 delta_tresh = 5
 blur_size = [21, 21]
 resolution = [1280, 960]
-fps = 6
-min_area = 250000
+fps = 15
+min_area = 60000
 pin = 23
 
 # init GPIO shit
@@ -130,7 +130,7 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("omxplayer --loop -o local --vol -2500 " +
+                    syscmd("omxplayer --loop -o local --vol -3000 " +
                            ambiente, False)
                     # make random speech settings
                     settings = {
