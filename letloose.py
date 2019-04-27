@@ -107,7 +107,11 @@ try:
             if cv2.contourArea(c) < min_area:
                 continue
             text = "Occupied"
-
+        speak(
+            "Komm zu mir, komm ganz nah zu mir und fabulier mir eine kleine Geschichte. Deine Stimme klingt soooooo samtig. Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.", -2)
+        randwav = random.choice(
+            glob.glob("recordings/*.wav"))
+        play_audio(randwav, random.randint(-4,4))
         ###################################################################################
         # LOGIC
         ###################################################################################
