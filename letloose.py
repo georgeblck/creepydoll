@@ -26,7 +26,7 @@ import speech_recognition as sr
 
 # make options
 min_upload_seconds = 0.1
-min_motion_frames = 9
+min_motion_frames = 6
 camera_warmup_time = 1
 delta_tresh = 5
 blur_size = [21, 21]
@@ -159,7 +159,7 @@ try:
                             u"Da hast du wohl mal kein Pech gehabt. Gute Nacht und auf Bald. Wir sehen uns wenn du die Augen zumachst.", settings["pitch"])
                         syscmd("killall mplayer")
                         syscmd("killall omxplayer.bin")
-                        time.sleep(5 * 60)
+                        time.sleep(30)
                     else:
                         speak(
                             u"Gut! Gut, sehr gut. Jetzt bin ich wach. Lass uns ein bisschen Spass haben. Wenn man das so nennen darf.", settings["pitch"])
@@ -217,7 +217,7 @@ try:
                             u"Jetzt gehe ich wieder schlafen. Eine kurze Weile. Bleib bei mir und umarme mich.", settings["pitch"])
                         syscmd("killall mplayer")
                         syscmd("killall omxplayer.bin")
-                        time.sleep(5 * 60)
+                        time.sleep(30)
 
                     # update the last uploaded timestamp and reset the motion
                     # counter
