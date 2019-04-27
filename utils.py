@@ -38,11 +38,11 @@ def record_wav(length, filename):
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
     RATE = 22000
-    CHUNK = 512
+    CHUNK = 1024
     RECORD_SECONDS = length
     WAVE_OUTPUT_FILENAME = "recordings/" + filename + ".wav"
     audio = pyaudio.PyAudio()
-
+    print(WAVE_OUTPUT_FILENAME)
     # start Recording
     stream = audio.open(format=FORMAT, channels=CHANNELS, input_device_index=2,
                         rate=RATE, input=True,
@@ -139,7 +139,7 @@ def make_speech(speech, language="de"):
     return filename
 
 
-def transform_wav(wavname, steps=4, rate=7000):
+def transform_wav(wavname, steps=4, rate=10000):
     y, sr = librosa.load(wavname, sr=rate)
     y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
     librosa.output.write_wav(wavname, y_shifted, sr)
