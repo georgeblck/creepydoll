@@ -18,7 +18,7 @@ import glob
 import RPi.GPIO as GPIO
 import numpy as np
 from num2words import num2words
-import re
+import re as regexp
 
 #
 
@@ -126,7 +126,7 @@ try:
                     print("Motion detected")
                     ambiente = random.choice(
                         glob.glob("ambient/*.mp3"))
-                    syscmd("mplayer -volume 80 -loop 0 " + ambiente, False)
+                    syscmd("mplayer -volume 90 -loop 0 " + ambiente, False)
                     time.sleep(5)
                     # make random speech settings
                     settings = {
@@ -145,7 +145,7 @@ try:
                         print(transcribedListen)
 
                     # If there was speech -> Sleep and exit
-                    if re.search(r'stop|schlaf|aus|halt', transcribedListen):
+                    if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
                         speak(
                             "Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
                         time.sleep(10)
@@ -226,5 +226,6 @@ try:
         rawCapture.truncate(0)
 
 except KeyboardInterrupt:
+    syscmd("killall mplayer")
     GPIO.cleanup()
     sys.exit()
