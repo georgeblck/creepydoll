@@ -139,7 +139,7 @@ def make_speech(speech, language="de"):
     return filename
 
 
-def transform_wav(wavname, steps=4, rate=12000):
+def transform_wav(wavname, steps=4, rate=44000):
     y, sr = librosa.load(wavname, sr=rate)
     y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
     librosa.output.write_wav(wavname, y_shifted, sr)
@@ -151,7 +151,7 @@ def play_audio(filename, modulate, wait=True):
     """ Helper function to play audio files in Linux """
     if modulate != 0:
         filename = transform_wav(filename, modulate)
-    play_cmd = "mplayer -volume 100 ./{}".format(filename)
+    play_cmd = "mplayer -volume 90 ./{}".format(filename)
     syscmd(play_cmd, wait)
 
 
