@@ -44,7 +44,7 @@ def record_wav(length, filename, chan=1, rat=11000, chk=256):
     audio = pyaudio.PyAudio()
     print(WAVE_OUTPUT_FILENAME)
     # start Recording
-    stream = audio.open(format=FORMAT, channels=CHANNELS, input_device_index=0,
+    stream = audio.open(format=FORMAT, channels=CHANNELS, input_device_index=2,
                         rate=RATE, input=True,
                         frames_per_buffer=CHUNK)
     print "recording..."

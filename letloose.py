@@ -138,6 +138,7 @@ try:
                             ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
                         "pitch": np.random.normal(1.4, 0.2)
                     }
+                    print("should talk now")
                     old_talk(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
@@ -147,6 +148,7 @@ try:
                     #firstListen = listen_and_interpret(10)
                     #transcribedListen = firstListen["transcription"]
                     # print(transcribedListen)
+                    print("i should talk now")
                     yas = recognize_speech_from_mic(recognizer, microphone)
                     print(yas["transcription"])
                     if transcribedListen is None:
