@@ -36,9 +36,9 @@ def syscmd(cmd, waiting=True):
 
 def record_wav(length, filename):
     FORMAT = pyaudio.paInt16
-    CHANNELS = 2
+    CHANNELS = 1
     RATE = 11000
-    CHUNK = 256
+    CHUNK = 1024
     RECORD_SECONDS = length
     WAVE_OUTPUT_FILENAME = "recordings/" + filename + ".wav"
     audio = pyaudio.PyAudio()
