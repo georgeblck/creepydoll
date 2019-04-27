@@ -135,11 +135,11 @@ try:
                     # make random speech settings
                     settings = {
                         "path": random.choice(
-                            ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
+                            ["button", "parrot_raw", "play_sounds"]),
                         "pitch": random.randint(3,7)
                     }
                     print("should talk now")
-                    speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
+                    speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten musst du mit mir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     # if random.random() >= 0.5:
@@ -160,7 +160,7 @@ try:
                         time.sleep(10)
                     else:
                         speak(
-                            u"Gut! Gut, gut, gut. Jetzt bin ich wach. Lass uns ein bisschen spielen. Wenn man das so nennen darf.", settings["pitch"])
+                            u"Gut! Gut, gut, gut. Jetzt bin ich wach. Lass uns ein bisschen Spass haben. Wenn man das so nennen darf.", settings["pitch"])
                         settings["path"] = "parrot_raw"
                         if settings["path"] == "button":
                             speak(
@@ -191,7 +191,7 @@ try:
                             speak("Macht das nicht Spaß?", settings["pitch"])
                         elif settings["path"] == "parrot_raw":
                             speak(
-                                "Komm näher näher näher und erzähl mir eine kleine Geschichte. Deine Stimme klingt so schön.", settings["pitch"])
+                                "Komm zu mir, komm ganz nah zu mir und  fabulier mir eine kleine Geschichte. Deine Stimme klingt so samtig.", settings["pitch"])
                             speak(
                                 "Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.", settings["pitch"])
                             mirrorCounter = 0
