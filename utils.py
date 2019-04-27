@@ -154,6 +154,10 @@ def play_audio(filename, modulate, wait=True):
     play_cmd = "mplayer -volume 95 ./{}".format(filename)
     syscmd(play_cmd, wait)
 
+def old_talk(text, pitch, waiting = True):
+    fname = make_speech(text)
+    play_cmd = "mplayer -volume 95 -speed {} ./{}".format(pitch, fname)
+    syscmd(play_cmd, waiting)
 
 def is_time_between(begin_time, end_time, check_time=None):
     # If check time is not given, default to current UTC time
@@ -162,3 +166,54 @@ def is_time_between(begin_time, end_time, check_time=None):
         return check_time >= begin_time and check_time <= end_time
     else:  # crosses midnight
         return check_time >= begin_time or check_time <= end_time
+
+def recognize_speech_from_mic(recognizer, microphone):
+    """Transcribe speech from recorded from `microphone`.
+
+    Returns a dictionary with three keys:
+    "success": a boolean indicating whether or not the API request was
+               successful
+    "error":   `None` if no error occured, otherwise a string containing
+               an error message if the API could not be reached or
+               speech was unrecognizable
+    "transcription": `None` if speech could not be transcribed,
+               otherwise a string containing the transcribed text
+    """
+    # check that recognizer and microphone arguments are appropriate type
+    if not isinstance(recognizer, sr.Recognizer):
+        raise TypeError("`recognizer` must be `Recognizer` instance")
+
+    if not isinstance(microphone, sr.Microphone):
+        raise TypeError("`microphone` must be `Microphone` instance")
+
+    # adjust the recognizer sensitivity to ambient noise and record audio
+    # from the microphone
+    with microphone as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+
+    # set up the response object
+    response = {
+        "success": True,
+        "error": None,
+        "transcription": None
+    }
+
+    # try recognizing the speech in the recording
+    # if a RequestError or UnknownValueError exception is caught,
+    #     update the response object accordingly
+    try:
+        #response["transcription"] = recognizer.recognize_google(audio)
+        azKey = random.choice(
+            ["929ceac53b6144b98bf2bcec94077198", "e887f21dfd9649f5a2264f2540990de3"])
+        response["transcription"] = recognizer.recognize_azure(
+            audio, key=azKey, language=lang)
+    except sr.RequestError:
+        # API was unreachable or unresponsive
+        response["success"] = False
+        response["error"] = "API unavailable"
+    except sr.UnknownValueError:
+        # speech was unintelligible
+        response["error"] = "Unable to recognize speech"
+
+    return response

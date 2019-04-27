@@ -132,9 +132,9 @@ try:
                     settings = {
                         "path": random.choice(
                             ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                        "pitch": random.randint(3, 9)
+                        "pitch": np.random.normal(1.4, 0.2)
                     }
-                    speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
+                    old_talk(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
                           settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     # if random.random() >= 0.5:
@@ -148,28 +148,27 @@ try:
                         transcribedListen = "Nichts"
                     # If there was speech -> Sleep and exit
                     if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
-                        speak(
+                        old_talk(
                             u"Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
                         time.sleep(10)
                     else:
-                        speak(
-                            u"Du Stück. Jetzt bin ich wach. Lass uns spielen.", settings["pitch"])
+                        old_talk(
+                            u"Gut! Gut, gut, gut. Jetzt bin ich wach. Lass uns ein bisschen spielen. Wenn man das so nennen darf.", settings["pitch"])
                         settings["path"] = "button"
                         if settings["path"] == "button":
-                            speak(
+                            old_talk(
                                 "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
-                            speak(
+                            old_talk(
                                 u"Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden. Drück mein Auge.", settings["pitch"])
                             make_speech(num2words(
                                 buttonCounter, lang="de") + u" Menschen haben mich schon gedrückt. Streichel mein Auge. Drück mein Auge.")
-                            volume = 80
-                            pitch = 0
+                            volume = 70
+                            pitch = 1
                             while GPIO.event_detected(pin) == False:
-                                volume += 5
-                                pitch += 2
-                                transform_wav("speak.wav", pitch)
+                                volume += 1
+                                pitch += 0.1
                                 syscmd(
-                                    "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), 1), True)
+                                    "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), pitch), True)
                             buttonCounter += 1
                             syscmd(
                                 "mplayer -volume 100 -speed 1.7 creepy_laugh.mp3", False)
@@ -233,6 +232,8 @@ try:
         rawCapture.truncate(0)
 
 except KeyboardInterrupt:
+    camera.close()
+    syscmd("killall omxplayer.bin")
     syscmd("killall mplayer")
     GPIO.cleanup()
     sys.exit()
