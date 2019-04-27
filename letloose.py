@@ -130,9 +130,10 @@ try:
                     settings = {
                         "path": random.choice(
                             ["button", "parrot_raw", "parrot_recog", "talk_back", "play_sounds"]),
-                        "pitch": random.randint(4, 9)
+                        "pitch": random.randint(3, 9)
                     }
-                    speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.")
+                    speak(u"Ja ja ja ja. Ich erkenne ein neues Gesicht. Ein neuer Mensch, ein neuer Freund zum anfassen und umarmen. Sprich das Zauberwort und ich gehe wieder schlafen. Ansonsten müssen wir spielen.",
+                          settings["pitch"])
                     # Listen for spokenword for 10 seconds. Save the recordings!
                     if random.random() >= 0.5:
                         transcribedListen = None
@@ -142,19 +143,20 @@ try:
                         print(transcribedListen)
 
                     # If there was speech -> Sleep and exit
-                    if re.search(r'stop|schlaf|aus', transcribedListen):
+                    if re.search(r'stop|schlaf|aus|halt', transcribedListen):
                         speak(
-                            "Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.")
+                            "Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
                         time.sleep(10)
                     else:
-                        speak("Du Stück. Jetzt bin ich wach. Lass uns spielen.")
+                        speak(
+                            "Du Stück. Jetzt bin ich wach. Lass uns spielen.", settings["pitch"])
                         if settings["path"] == "button":
                             speak(
-                                "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?")
+                                "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
                             speak(
-                                "Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden.")
+                                "Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden.", settings["pitch"])
                             make_speech(num2words(
-                                buttonCounter, lang="de") + u" Menschen haben mich gedrückt. Streichel mein Auge. Drück mein Auge.")
+                                buttonCounter, lang="de") + u" Menschen haben mich schon gedrückt. Streichel mein Auge. Drück mein Auge.")
                             volume = 60
                             while GPIO.event_detected(pin) == False:
                                 volume += 5
@@ -164,20 +166,21 @@ try:
                                     "mplayer -volume {} -speed {} speak.wav".format(min(volume, 100), 1), True)
                             buttonCounter += 1
                             syscmd(
-                                "mplayer -volume 100 -speed 1.7 creepy_laugh.mp3", False)
+                                "mplayer -volume 100 -speed 1.7 creepy_laugh.mp3", True)
                         elif settings["path"] == "play_sounds":
                             speak(
-                                "Psssst. Ich erzähl dir mal eine Geschichte. Sei ganz leise.")
+                                "Psssst. Ich erzähl dir mal eine Geschichte. Sei ganz leise.", settings["pitch"])
                             chosenSound = random.choice(
                                 glob.glob("sounds/*.mp3"))
                             play_audio(chosenSound, True)
-                            speak("Ich habe keinen Mund und ich muss schreien!")
-                            speak("Macht das nicht Spaß?")
+                            speak(
+                                "Ich habe keinen Mund und ich muss schreien!", settings["pitch"])
+                            speak("Macht das nicht Spaß?", settings["pitch"])
                         elif settings["path"] == "parrot_raw":
                             speak(
-                                "Komm näher näher näher und erzähl mir eine kleine Geschichte. Deine Stimme klingt so schön.")
+                                "Komm näher näher näher und erzähl mir eine kleine Geschichte. Deine Stimme klingt so schön.", settings["pitch"])
                             speak(
-                                "Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.")
+                                "Und vielleicht kannst du mir so auch etwas reden beibringen. Dann wollen sicher noch mehr Menschen mit mir spielen.", settings["pitch"])
                             mirrorCounter = 0
                             while mirrorCounter < 60 * 1:
                                 mirrorLen = random.randint(5, 10)
@@ -195,12 +198,18 @@ try:
                             while mirrorCounter < 60 * 1:
                                 mirrorLen = random.randint(5, 10)
                                 mirrorCounter += mirrorLen
-                                listen_and_playback(mirrorLen, settings, True)
+                                saidthings = listen_and_interpret(mirrorLen)
+                                if saidthings is not None:
+                                    speak(saidthings, pitch)
+                                else:
+                                    speak("Sag mal was jetzt.",
+                                          settings["pitch"])
+
                         else:
                             print("Not yet implemented")
 
                         speak(
-                            "Jetzt gehe ich wieder schlafen für eine Weile. Bleib bei mir und umarme mich.")
+                            "Jetzt gehe ich wieder schlafen für eine Weile. Bleib bei mir und umarme mich.", settings["pitch"])
                         time.sleep(120)
                     syscmd("killall mplayer")
                     # update the last uploaded timestamp and reset the motion

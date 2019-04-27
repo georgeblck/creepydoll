@@ -109,7 +109,7 @@ def interpret_wav(wavname, recognizer, lang="de-DE"):
 def listen_and_interpret(len, lang="de-DE"):
     # Record audio for a given time
     wav_name = record_wav(
-        len, "sleep" + datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
+        len, "interpret" + datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
     r = sr.Recognizer()
     # Analyze recorder audio with google
     return interpret_wav(wav_name, r, lang)
@@ -129,17 +129,17 @@ def listen_and_playback(len, pitcher, interpret=False, lang="de-DE"):
         play_audio(wav_name, pitcher)
 
 
-def speak(speech, language = "de", pitch = 0):
+def speak(speech, pitch=0, language="de"):
     play_audio(make_speech(speech, language), pitch)
 
 
-def make_speech(speech, language = "de"):
+def make_speech(speech, language="de"):
     filename = 'speak.wav'
     tts = gTTS(text=speech, lang=language).save(filename)
     return filename
 
 
-def transform_wav(wavname, steps=4, rate=10000):
+def transform_wav(wavname, steps=4, rate=12000):
     y, sr = librosa.load(wavname, sr=rate)
     y_shifted = librosa.effects.pitch_shift(y, sr, n_steps=steps)
     librosa.output.write_wav(wavname, y_shifted, sr)
@@ -147,12 +147,12 @@ def transform_wav(wavname, steps=4, rate=10000):
     return wavname
 
 
-def play_audio(filename, pitcher):
+def play_audio(filename, modulate, wait=True):
     """ Helper function to play audio files in Linux """
-    if pitcher != 0:
-        filename = transform_wav(filename, steps=pitcher)
+    if modulate != 0:
+        filename = transform_wav(filename, modulate)
     play_cmd = "mplayer -volume 100 ./{}".format(filename)
-    syscmd(play_cmd)
+    syscmd(play_cmd, wait)
 
 
 def is_time_between(begin_time, end_time, check_time=None):
