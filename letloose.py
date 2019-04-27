@@ -148,16 +148,16 @@ try:
                     # If there was speech -> Sleep and exit
                     if regexp.search(r'stop|schlaf|aus|halt', transcribedListen):
                         speak(
-                            "Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
+                            u"Hast du ein Glück. Gute Nacht und auf Bald. In deinen Träumen.", settings["pitch"])
                         time.sleep(10)
                     else:
                         speak(
-                            "Du Stück. Jetzt bin ich wach. Lass uns spielen.", settings["pitch"])
+                            u"Du Stück. Jetzt bin ich wach. Lass uns spielen.", settings["pitch"])
                         if settings["path"] == "button":
                             speak(
                                 "Mein kleines Auge tut so weh. Siehst du was man mit mir gemacht hat?", settings["pitch"])
                             speak(
-                                "Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden.", settings["pitch"])
+                                u"Hilf mir bitte. Du bist doch mein Freund. Und ich möchte so gerne angefasst werden.", settings["pitch"])
                             make_speech(num2words(
                                 buttonCounter, lang="de") + u" Menschen haben mich schon gedrückt. Streichel mein Auge. Drück mein Auge.")
                             volume = 60
